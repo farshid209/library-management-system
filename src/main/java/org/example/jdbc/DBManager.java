@@ -18,11 +18,13 @@ public class DBManager {
         return instance;
     }
 
+    //متد ایجاد ارتباط با دیتابیس
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
 
+    //متد ایجاد جداول در دیتابیس
     public void initializeTables(Statement stmt) throws SQLException {
         String dropTablesQuery = "DROP TABLE IF EXISTS book, member, reserve, member_detail;";
         stmt.executeUpdate(dropTablesQuery);
@@ -84,6 +86,7 @@ public class DBManager {
         System.out.println("Create reserve table by sql statement: " + createReserveQuery);
     }
 
+    //متد وارد کردن دیتاهای تستی در جداول ایجاد شده
     public void initializeTablesData(Statement stmt) throws SQLException {
         String insertMember1 = "INSERT INTO member (first_name, last_name, national_code, birth_date) VALUES ('Ali', 'Etemadi', '0017609854', '1375-05-08');";
         String insertMember2 = "INSERT INTO member (first_name, last_name, national_code, birth_date) VALUES ('Farshid', 'HosseinPour', '0012755320', '1370-03-23');";
@@ -124,18 +127,5 @@ public class DBManager {
         String insertMemberDetail1 = "INSERT INTO member_detail (province, city, address, phone_number, mobile_number, membership_date, member_id) VALUES ('Tehran', 'Tehran', 'Narmak, Haft Hoz', '02187654321', '09120000000', '1400-12-01',(select id from member where national_code = '0012755320'));";
         stmt.executeUpdate(insertMemberDetail1);
         System.out.println("Insert Detail for member.");
-    }
-
-    public ResultSet get(Statement stmt, String query) throws SQLException {
-        ResultSet resultSet = stmt.executeQuery(query);
-        if (resultSet.next()) {
-            return resultSet;
-        }
-        return null;
-    }
-
-    public int getCount(Statement stmt, String query) throws SQLException {
-        ResultSet resultSet = stmt.executeQuery(query);
-        return resultSet.getRow();
     }
 }

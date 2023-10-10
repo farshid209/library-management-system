@@ -18,6 +18,7 @@ public class LibraryManager {
     private Connection connection;
     private Statement statement;
 
+    //ایجاد ارتباط با دیتابیس همزمان با ایجاد شی از این کلاس
     public LibraryManager() {
         dbManager = DBManager.getInstance();
         try {
@@ -40,6 +41,7 @@ public class LibraryManager {
         }
     }
 
+    //جهت بستن ارتباط با دیتابیس
     public void closeConnection() {
         try {
             connection.close();
@@ -149,8 +151,8 @@ public class LibraryManager {
         ResultSet resultSet = null;
         Member member = new Member();
         try {
-            resultSet = dbManager.get(statement, query);
-            if (resultSet != null) {
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
                 member.setId(resultSet.getLong("id"));
                 member.setFirstName(resultSet.getString("first_name"));
                 member.setLastName(resultSet.getString("last_name"));
@@ -168,7 +170,8 @@ public class LibraryManager {
         String readQuery = "select * from reserve where book_id = " + bookId + " and is_returned = 0;";
         String query = "INSERT INTO reserve (book_id, member_id, reserve_date, is_returned) VALUES (" + bookId + ", " + memberId + ", now(), false);";
         try {
-            int count = dbManager.getCount(statement, readQuery);
+            ResultSet resultSet = statement.executeQuery(query);
+            int count = resultSet.getRow();
             if (count == 0) {
                 statement.executeUpdate(query);
                 return true;
@@ -185,8 +188,8 @@ public class LibraryManager {
         ResultSet resultSet = null;
         Member member = new Member();
         try {
-            resultSet = dbManager.get(statement, query);
-            if (resultSet != null) {
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
                 member.setId(resultSet.getLong("id"));
                 member.setFirstName(resultSet.getString("first_name"));
                 member.setLastName(resultSet.getString("last_name"));
@@ -205,8 +208,8 @@ public class LibraryManager {
         ResultSet resultSet = null;
         Book book = new Book();
         try {
-            resultSet = dbManager.get(statement, query);
-            if (resultSet != null) {
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
                 book.setId(resultSet.getLong("id"));
                 book.setTitle(resultSet.getString("title"));
                 book.setAuthor(resultSet.getString("author"));
